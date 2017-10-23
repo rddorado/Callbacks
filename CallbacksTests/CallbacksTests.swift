@@ -10,26 +10,22 @@ import XCTest
 import Nimble
 @testable import Callbacks
 
-class AdapterViewPortSpy: AdapterViewPort {
-    var updateViewWasCalled = false
-    func updateView(with model: String) {
-        updateViewWasCalled = true
-    }
-}
 class CallbacksTests: XCTestCase {
     
     var adapter: Adapter!
-    var adapterViewPortSpy: AdapterViewPortSpy!
     
     override func setUp() {
         super.setUp()
-        adapterViewPortSpy = AdapterViewPortSpy()
-        adapter = Adapter(delegate: adapterViewPortSpy)
+        adapter = Adapter()
     }
     
     func testHandleTapEventUpdatesTheDisplay() {
         let _ =  adapter.handleButtonTap(value: "0")
-        expect(self.adapterViewPortSpy.updateViewWasCalled).to(beTrue())
+        var updateViewWasCalled = true
+        adapter.buttonTapProcessComplete = { viewModel in
+            updateViewWasCalled = true
+        }
+        expect(updateViewWasCalled).to(beTrue())
     }
     
     func testIncrementByOneComputesValueCorrectly() {
